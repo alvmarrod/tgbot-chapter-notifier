@@ -109,10 +109,10 @@ function DeployBot()
     fi;
   done
 
-  echo -n "Introduce the name of the desired bot: "
-  read Bot
+  echo -n "Do you want to run it in background? (Y/N): "
+  read Background
 
-  LaunchBot $Bot
+  LaunchBot $Background
 
   backtoMenu
 
@@ -122,21 +122,27 @@ function LaunchBot()
 {
 
   clear
-  echo "Starting Bot $1..."
+  echo "Starting Chapter Notifier ..."
 
-  botName=$1
+  Background=$1
 
-  sudo rm -r "/tmp/$botName"
-  sudo cp -r "./$botName" "/tmp/$botName"
+  sudo rm -r "/tmp/ChapterNotifier"
+  sudo cp -r "./ChapterNotifier" "/tmp/ChapterNotifier"
 
   # Token extraction
-  line=$(grep $botName ./PrivateData)
+  line=$(grep ChapterNotifier ./PrivateData)
   read -ra splitted <<< "$line"
   actualToken=${splitted[1]}
   echo "Token: $actualToken"
-  sudo sed -i -e "s/BotFather_provided_token/$actualToken/g" "/tmp/$botName/$botName.py"
+  sudo sed -i -e "s/BotFather_provided_token/$actualToken/g" "/tmp/ChapterNotifier/main.py"
 
-  python3 "/tmp/$botName/$botName.py"
+
+  if [ "$Background" = "Y" ] || [ "$Background" = "y" ]; then
+    logname=$(date +"date_%y_%m_%d_run_%H_%M")
+    nohup python3 -u "/tmp/ChapterNotifier/main.py" 2>&1 > /tmp/ChapterNotifier/log_$logname.txt &
+  else
+    python3 "/tmp/ChapterNotifier/main.py"
+  fi
 
   backtoMenu
 
