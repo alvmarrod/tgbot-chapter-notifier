@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Chapter Availability Notifier
 # Started on Nov 2018
 
