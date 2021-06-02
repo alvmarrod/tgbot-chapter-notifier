@@ -134,8 +134,8 @@ function LaunchBot()
   if [ "$Background" = "Y" ] || [ "$Background" = "y" ]; then
     logname=$(date +"date_%y_%m_%d_run_%H_%M")
     logfile="/tmp/ChapterNotifier/log_$logname.txt"
-    touch $logfile
-    chmod 666 $logfile
+    sudo touch $logfile
+    sudo chmod 666 $logfile
     nohup python3 -u "/tmp/ChapterNotifier/main.py" 2>&1 >> $logfile &
   else
     python3 "/tmp/ChapterNotifier/main.py"
