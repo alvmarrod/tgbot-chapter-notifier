@@ -1,7 +1,7 @@
 FROM python:3.9.5
 
-COPY ./chapternotifier/Classes/ ./app/Classes/
-COPY ./chapternotifier/main.py ./app/
+COPY ./ChapterNotifier/Classes/ ./app/Classes/
+COPY ./ChapterNotifier/main.py ./app/
 COPY requirements.txt /tmp/requirements.txt
 
 RUN apt-get update && \
