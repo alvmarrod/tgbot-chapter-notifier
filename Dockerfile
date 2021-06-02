@@ -3,6 +3,7 @@ FROM python:3.9.5
 COPY ./ChapterNotifier/Classes/ ./app/Classes/
 COPY ./ChapterNotifier/main.py ./app/
 COPY requirements.txt /tmp/requirements.txt
+COPY PrivateData /PrivateData
 
 RUN apt-get update && \
     apt-get install --no-install-recommends sqlite3 -y && \

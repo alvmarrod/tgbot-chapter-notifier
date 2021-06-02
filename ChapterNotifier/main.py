@@ -88,7 +88,10 @@ class Bot:
         self.__logger = logging.getLogger(__name__)
 
         # Library objects
-        self.__updater = Updater(token="BotFather_provided_token")
+        with open("/PrivateData", 'r') as fp:
+            token = fp.readline().split(" ")[1]
+        self.__updater = Updater(token=token)
+        #self.__updater = Updater(token="BotFather_provided_token")
         self.__dp = self.__updater.dispatcher
 
         self.__seeker = ChapterSeeker(self.__updater, "ChapterNotifier.db")
