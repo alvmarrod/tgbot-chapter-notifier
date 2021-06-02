@@ -8,9 +8,9 @@ RUN apt-get update && \
     apt-get install --no-install-recommends sqlite3 -y && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install -r /tmp/requirements.txt
+RUN python3 -m pip install -u -r /tmp/requirements.txt
 
-RUN useradd -r -u 1001 -g nonroot root
+RUN useradd -r -u 1001 -g root nonroot
 USER nonroot
 
 WORKDIR /app
