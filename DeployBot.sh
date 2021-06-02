@@ -1,5 +1,4 @@
 #!/bin/bash
-# Naipsas - Btc Sources
 # This script takes a bot, replaces the token string it has in GitHub, puts
 # instead the actual token from ./TelegramBots/PrivateData and copies it to
 # tmp folder, where it's launched.
@@ -9,7 +8,7 @@ function menu {
 
   echo "#####################"
   echo "####             ####"
-  echo "# 1.- Install API   #"
+  echo "# 1.- Setup         #"
   echo "# 2.- Deploy bot    #"
   echo "# 3.- Exit          #"
   echo "####             ####"
@@ -21,7 +20,7 @@ function menu {
 
   case $Option in
     1 )
-      InstallAPI
+      Setup
       ;;
     2 )
       DeployBot
@@ -54,7 +53,7 @@ function backtoMenu()
 
 }
 
-function InstallAPI()
+function Setup()
 {
 
   clear
@@ -76,24 +75,6 @@ function InstallAPI()
     echo -e "\tWe couldn't install Setuptools for python3!"
   fi
 
-  echo "Getting ready to install Telegram-Bot-API (Python)..."
-
-  sudo -H python3.6 -m pip install python-telegram-bot --upgrade &> /dev/null
-  if [ "$?" -eq "0" ]; then
-    echo -e "\tAPI installed!"
-  else
-    echo -e "\tWe couldn't install the API!"
-  fi
-
-  echo "Getting ready to install emoji (Python)..."
-
-  sudo -H python3.6 -m pip install emoji --upgrade &> /dev/null
-  if [ "$?" -eq "0" ]; then
-    echo -e "\tEmoji installed!"
-  else
-    echo -e "\tWe couldn't install Emoji!"
-  fi
-
   echo "Getting ready to install sqlite3..."
 
   sudo apt-get install sqlite3 -y &> /dev/null
@@ -101,6 +82,15 @@ function InstallAPI()
     echo -e "\tsqlite3 installed!"
   else
     echo -e "\tWe couldn't install sqlite3!"
+  fi
+
+  echo "Getting ready to install python requirements..."
+
+  sudo -H python3 -m pip install -r requirements.txt &> /dev/null
+  if [ "$?" -eq "0" ]; then
+    echo -e "\tDependencies installed!"
+  else
+    echo -e "\tWe couldn't install all required dependencies!"
   fi
 
   backtoMenu
@@ -146,7 +136,7 @@ function LaunchBot()
   echo "Token: $actualToken"
   sudo sed -i -e "s/BotFather_provided_token/$actualToken/g" "/tmp/$botName/$botName.py"
 
-  python3.6 "/tmp/$botName/$botName.py"
+  python3 "/tmp/$botName/$botName.py"
 
   backtoMenu
 
