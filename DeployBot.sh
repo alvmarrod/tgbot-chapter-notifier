@@ -101,13 +101,7 @@ function DeployBot()
 {
 
   clear
-  echo "Deploy bot selected! Let's see how many are available:"
-  #ls -d */
-  for f in *; do
-    if [[ -d $f  ]]; then
-      echo -e "\t$f";
-    fi;
-  done
+  echo "Deploying Chapter Notifier!"
 
   echo -n "Do you want to run it in background? (Y/N): "
   read Background
@@ -139,7 +133,10 @@ function LaunchBot()
 
   if [ "$Background" = "Y" ] || [ "$Background" = "y" ]; then
     logname=$(date +"date_%y_%m_%d_run_%H_%M")
-    nohup python3 -u "/tmp/ChapterNotifier/main.py" 2>&1 > /tmp/ChapterNotifier/log_$logname.txt &
+    logfile="/tmp/ChapterNotifier/log_$logname.txt"
+    touch $logfile
+    chmod 666 $logfile
+    nohup python3 -u "/tmp/ChapterNotifier/main.py" 2>&1 >> $logfile &
   else
     python3 "/tmp/ChapterNotifier/main.py"
   fi
