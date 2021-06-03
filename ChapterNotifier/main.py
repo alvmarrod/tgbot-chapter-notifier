@@ -89,7 +89,8 @@ class Bot:
 
         # Library objects
         with open("/PrivateData", 'r') as fp:
-            token = fp.readline().split(" ")[1]
+            token = fp.readline().split(" ")[1].strip("\n")
+            #self.log("bot", "warn", ["token", "-" + token + "-"])
         self.__updater = Updater(token=token)
         #self.__updater = Updater(token="BotFather_provided_token")
         self.__dp = self.__updater.dispatcher
