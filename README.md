@@ -7,19 +7,19 @@ This bot is a Manga availability notifier, based on [mangapanda](www.mangapanda.
 1. Build your image
 
 ```
-docker build .
+docker build -t github.com/alvmarrod/chapter-notifier-bot:0.1.0 .
 ```
 
 2. Run a container
 
 ```
-docker run -di --name bot_container <image_id>
+docker run -di --name bot_container github.com/alvmarrod/chapter-notifier-bot:0.1.0
 ```
 
 3. Check inside
 
 ```
- docker exec -it <container_id> /bin/bash
+docker exec -it bot_container /bin/bash
 ```
 
 ## Dependencies
