@@ -2,6 +2,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,python
 
+### Chapter Notifier Bot Section ###
+
+PrivateData
+ChapterNotifier.db
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -152,6 +157,7 @@ Thumbs.db
 
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
