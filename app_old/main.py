@@ -88,7 +88,7 @@ class Bot:
         self.__logger = logging.getLogger(__name__)
 
         # Library objects
-        with open("/PrivateData", 'r') as fp:
+        with open("./PrivateData", 'r') as fp:
             token = fp.readline().split(" ")[1].strip("\n")
             #self.log("bot", "warn", ["token", "-" + token + "-"])
         self.__updater = Updater(token=token)

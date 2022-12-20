@@ -121,7 +121,7 @@ function LaunchBot()
   Background=$1
 
   sudo rm -r "/tmp/ChapterNotifier"
-  sudo cp -r "./ChapterNotifier" "/tmp/ChapterNotifier"
+  sudo cp -r "./src" "/tmp/ChapterNotifier"
 
   # Token extraction
   line=$(grep ChapterNotifier ./PrivateData)

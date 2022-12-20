@@ -1,4 +1,4 @@
-# Manga Chapter Notifier
+# [Telegram Bot] Chapter Notifier
 
 This bot is a Manga availability notifier, based on [mangapanda](www.mangapanda.onl) webpage.
 
@@ -13,7 +13,7 @@ docker build -t github.com/alvmarrod/chapter-notifier-bot:0.1.0 .
 2. Run a container
 
 ```
-docker run -di --name bot_container github.com/alvmarrod/chapter-notifier-bot:0.1.0
+docker run -d --name bot_container github.com/alvmarrod/chapter-notifier-bot:0.1.0
 ```
 
 3. Check inside
