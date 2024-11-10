@@ -1,0 +1,97 @@
+{
+    "config": {
+        "values": {
+            "lang": "es_ES",
+            "dateFormat": "DD/MM/YYYY HH:mm:ss"
+        }
+    },
+    "generic": {
+        "error": ["Error interno. El admin ha sido notificado"],
+        "notStarted": ["El bot no ha sido inicializado en este chat"],
+        "newElement": [
+            "%s",
+            " **%s - Capítulo disponible**\n\n",
+            "%s - [#%s](%s)" 
+        ]
+    },
+    "cmd": {
+        "start": {
+            "help": ["Inicializa el bot en el chat actual"],
+            "done": ["Iniciando el bot en este chat"],
+            "error": ["Ya estoy activo en este chat"]
+        },
+        "add": {
+            "help": [
+                "Selecciona el manga al que te quieres suscribir. ",
+                "Si no aparece, intentelo de nuevo más tarde."
+            ],
+            "selection": [
+                "Seleccionaste el manga: %s"
+            ],
+            "done": [
+                "Manga añadido a la lista, se buscarán novedades a partir de ahora..."
+            ],
+            "error": [
+                "No se pudo añadir el manga '%s', ¿tal vez ya estaba añadido?"
+            ],
+            "cancel": [
+                "Operación cancelada"
+            ]
+        },
+        "del": {
+            "help": [
+                "Selecciona el manga del que quieres desuscribirte."
+            ],
+            "done": [
+                "Manga eliminado de la colección, ya no se notificarán novedades"
+            ],
+            "error": [
+                "No se pudo eliminar el manga, ¿tal vez no estaba en seguimiento?"
+            ],
+            "empty": [
+                "¡No hay mangas en seguimiento!"
+            ],
+            "cancel": [
+                "Operación cancelada"
+            ],
+            "selection": [
+                "Seleccionaste el manga: %s"
+            ]
+        },
+        "info": {
+            "help": [
+                "Uso:",
+                "/info <Nombre del Manga>",
+                "Para evitar errores, recomendamos copiar y pegar el nombre desde la web, ya que se requiere que sea exacto"
+            ],
+            "done": [
+                "Manga: %s\n\t%s Capítulo: %s\n\t%s Publicado: %s\n\t%s Disponible en: %s"
+            ],
+            "error": [
+                "No se pudo obtener la información del manga, ¿tal vez no está en seguimiento?"
+            ],
+            "lastNotAvailable": [
+                "Manga: %s\n\tNo se ha encontrado información sobre el último capítulo"
+            ]
+        },
+        "list": {
+            "help": [
+                "Uso:",
+                "/list",
+                "Muestra la lista de mangas en seguimiento"
+            ],
+            "done": [
+                "Colección en seguimiento:"
+            ],
+            "error": [
+                "Error al obtener la lista de mangas en seguimiento"
+            ],
+            "empty": [
+                "¡No hay mangas en seguimiento!"
+            ],
+            "cancel": [
+                "Revisión de la colección terminada"
+            ]
+        }
+    }
+}

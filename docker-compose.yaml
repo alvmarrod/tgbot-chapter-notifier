@@ -1,0 +1,11 @@
+name: rogerbot
+
+services:
+  roger:
+    image: tgbot-chaptnotifier:1.0.0
+    env_file:
+      - src/.env
+    volumes:
+      - type: bind
+        source: app/data
+        target: /app/data

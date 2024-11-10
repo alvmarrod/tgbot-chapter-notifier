@@ -1,0 +1,97 @@
+{
+    "config": {
+        "values": {
+            "lang": "en_US",
+            "dateFormat": "MM/DD/YYYY HH:mm:ss"
+        }
+    },
+    "generic": {
+        "error": ["Internal error. The admin has been notified"],
+        "notStarted": ["The bot has not been initialized in this chat"],
+        "newElement": [
+            "%s",
+            " **%s - Chapter available**\n\n",
+            "%s - [#%s](%s)" 
+        ]
+    },
+    "cmd": {
+        "start": {
+            "help": ["Kickoff the bot in the current chat"],
+            "done": ["Bot initialized in this chat"],
+            "error": ["I was already active in this chat"]
+        },
+        "add": {
+            "help": [
+                "Please select the manga you want to subscribe to. ",
+                "Please try again later if it doesn't appear."
+            ],
+            "selection": [
+                "You selected: %s"
+            ],
+            "done": [
+                "Manga added to the list, tracking the new manga..."
+            ],
+            "error": [
+                "Error adding manga to the list, maybe it was already being tracked?"
+            ],
+            "cancel": [
+                "Operation canceled"
+            ]
+        },
+        "del": {
+            "help": [
+                "Please select the manga you want to unsubscribe from."
+            ],
+            "done": [
+                "Manga removed from the collection, no longer tracking new chapters"
+            ],
+            "error": [
+                "Error removing manga from the collection, maybe it wasn't being tracked?"
+            ],
+            "empty": [
+                "No tracked mangas to delete!"
+            ],
+            "cancel": [
+                "Operation canceled"
+            ],
+            "selection": [
+                "You selected: %s"
+            ]
+        },
+        "info": {
+            "help": [
+                "Please use:",
+                "/info <Manga name>",
+                "To avoid errors we recommend copy&paste from the website, as it needs to be precise"
+            ],
+            "done": [
+                "Manga: %s\n\t%s Chapter: %s\n\t%s Published: %s\n\t%s Available at: %s"
+            ],
+            "error": [
+                "Error getting manga information, maybe it wasn't being tracked?"
+            ],
+            "lastNotAvailable": [
+                "Manga: %s\n\tLast chapter not available"
+            ]
+        },
+        "list": {
+            "help": [
+                "Please use:",
+                "/list",
+                "Shows the list of tracked mangas"
+            ],
+            "done": [
+                "Tracked collection:"
+            ],
+            "error": [
+                "Error getting the list of tracked mangas"
+            ],
+            "empty": [
+                "No tracked mangas!"
+            ],
+            "cancel": [
+                "Collection review completed"
+            ]
+        }
+    }
+}
