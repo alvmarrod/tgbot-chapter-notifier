@@ -3,6 +3,8 @@ name: rogerbot
 services:
   roger:
     image: tgbot-chaptnotifier:1.0.0
+    container_name: rogerbot
+    restart: unless-stopped
     env_file:
       - src/.env
     volumes:

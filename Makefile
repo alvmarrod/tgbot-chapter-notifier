@@ -14,6 +14,7 @@ docker-build: docker-clean-image
 
 docker-run: docker-stop docker-remove
 	docker run \
+	--restart unless-stopped \
 	--name ${BOT_CONTAINER_ALIAS}_${IMAGE_VERSION} \
 	-d \
 	--env-file ./src/.env \
