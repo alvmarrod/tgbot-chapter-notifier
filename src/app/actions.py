@@ -89,8 +89,10 @@ async def process_reporting() -> list[tuple[Suscription, Exception]]:
                     ])
 
             report.append(
-                sus,
-                notification_statuses[0][1]
+                (
+                    sus,
+                    notification_statuses[0][1]
+                )
             )
 
     return report

@@ -12,6 +12,12 @@
 - Removed unused functions on domain section related to suscription management.
   - This is replaced by logic directly implemented over memory/database logic.
 
+## [1.1.1] - 2025-06-21
+
+### Fixed
+
+- Suscription report generation fix.
+
 ## [1.1.0] - 2025-06-21
 
 ### Added
