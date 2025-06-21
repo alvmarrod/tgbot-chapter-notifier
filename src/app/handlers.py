@@ -7,6 +7,7 @@ try:
     from src.utils import log
     import src.utils as icons
     from src.app.client import pyrogram_client, memory, LANG_DICT
+    from src.app.actions import delete_suscription
     from src.domain.model import (Manga, search_manga_by_name)
     import src.domain.communications as comms
     from src.app.messages import (
@@ -17,6 +18,7 @@ except ModuleNotFoundError:
     from utils import log
     import utils as icons
     from app.client import pyrogram_client, memory, LANG_DICT
+    from app.actions import delete_suscription
     from domain.model import (Manga, search_manga_by_name)
     import domain.communications as comms
     from app.messages import (
@@ -256,9 +258,7 @@ async def cb_del_manga(client: Client, callback_query: CallbackQuery):
                 next((sc for sc in my_sus if sc.manga.name == selection_name),
                      None)
 
-            if target_sus is not None and \
-                    memory.delete_suscription(target_sus.chat.id,
-                                              target_sus.manga.name):
+            if delete_suscription(target_sus):
                 await callback_query.answer(LANG_DICT["cmd"]["del"]["done"])
                 await callback_query.message.edit_text(
                     (LANG_DICT["cmd"]["del"]["selection"] % selection_name)

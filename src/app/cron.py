@@ -3,10 +3,12 @@ from typing import Awaitable, Callable
 
 try:
     from src.utils import log
-    from src.app.actions import explore_web, process_reporting
+    from src.app.actions import explore_web, process_reporting, prune_suscriptions
+    import src.domain.communications as comms
 except ModuleNotFoundError:
     from utils import log
-    from app.actions import explore_web, process_reporting
+    from app.actions import explore_web, process_reporting, prune_suscriptions
+    import domain.communications as comms
 
 
 ###############################################################################
@@ -26,6 +28,9 @@ def perform_search_generator() -> Callable[[], Awaitable[None]]:
         """
         log("bot", "info", ["perform_search", "Searching for new content"])
         explore_web(url)
-        await process_reporting()
+        report_results: list[tuple[comms.Suscription, Exception]] = \
+            await process_reporting()
+
+        prune_suscriptions(report_results)
 
     return perform_search

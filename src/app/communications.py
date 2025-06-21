@@ -15,9 +15,19 @@ except ModuleNotFoundError:
 #                                  MESSAGES                                   #
 ###############################################################################
 
-async def notify_suscribers(chapter: MangaChapter, chats: list[Chat]):
-    """Notifies the suscribers of a new chapter"""
+async def notify_suscribers(chapter: MangaChapter, chats: list[Chat]) \
+    -> list[tuple[Chat, Exception]]:
+    """Notifies the suscribers of a new chapter
+    
+    Returns a list with the status returned by each Chat notification, based
+    on exceptions
+
+    Possible execeptions:
+    - Can raise
+      - pyrogram.errors.exceptions.forbidden_403.UserIsBlocked
+    """
     assert pyrogram_client is not None, "Pyrogram client is None"
+    results: list[tuple[Chat, Exception]] = []
 
     message: str = LANG_DICT["generic"]["newElement"] % (
         icons.NEW_ICON + icons.OK_ICON,
@@ -28,8 +38,14 @@ async def notify_suscribers(chapter: MangaChapter, chats: list[Chat]):
     )
 
     for chat in chats:
-        await pyrogram_client.send_message(
-            chat.id,
-            message,
-            disable_web_page_preview=True
-        )
+        try:
+            await pyrogram_client.send_message(
+                chat.id,
+                message,
+                disable_web_page_preview=True
+            )
+            results.append((chat, None))
+        except Exception as err:
+            results.append((chat, err))
+
+    return results

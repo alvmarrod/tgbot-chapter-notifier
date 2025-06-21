@@ -12,6 +12,17 @@
 - Removed unused functions on domain section related to suscription management.
   - This is replaced by logic directly implemented over memory/database logic.
 
+## [1.1.0] - 2025-06-21
+
+### Added
+
+- On `app/communications`, now `notify_suscribers` returns the result of each notification as an array.
+  - This is further used in `app/actions` to control and correctly process situations like user blocks, which lead to suscription pruning.
+
+### Changed
+
+- Refactor handlers to perform actions like `unsuscribe` in separate functions,  not tangled with the interface logic.
+
 ## [1.0.0] - 2024-11-10
 
 ### Added
