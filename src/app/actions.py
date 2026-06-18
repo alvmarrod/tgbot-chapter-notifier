@@ -1,6 +1,4 @@
-
 from typing import Optional
-from pyrogram.errors.exceptions.forbidden_403 import UserIsBlocked
 
 try:
     from src.utils import log
@@ -15,7 +13,8 @@ try:
     from src.domain.communications import Chat
     from src.domain.communications import Suscription
     from src.app.communications import notify_suscribers
-    from src.app.client import pyrogram_client, memory
+    from src.app.client import memory
+    from src.infrastructure.broker import ResponsePublisher
 except ModuleNotFoundError:
     from utils import log
     import infrastructure.web as it
@@ -29,21 +28,14 @@ except ModuleNotFoundError:
     from domain.communications import Chat
     from domain.communications import Suscription
     from app.communications import notify_suscribers
-    from app.client import pyrogram_client, memory
+    from app.client import memory
+    from infrastructure.broker import ResponsePublisher
 
 
-###############################################################################
-#                                  MESSAGES                                   #
-###############################################################################
-
-async def process_reporting() -> list[tuple[Suscription, Exception]]:
-    """Reviews the last chapters and notifies the suscribers
-    
-    Returns the list of suscriptions paired with errors, aimed to detect
-    problems like user blocks, etc
-    """
-    assert pyrogram_client is not None, "Pyrogram client is None"
-
+async def process_reporting(
+    publisher: Optional[ResponsePublisher] = None,
+    bot_id: str = "",
+) -> list[tuple[Suscription, Exception]]:
     suscriptions: list[Suscription] = memory.read_suscriptions()
     mangas: list[Manga] = memory.read_mangas()
 
@@ -73,10 +65,14 @@ async def process_reporting() -> list[tuple[Suscription, Exception]]:
            sus.last != sus_manga.last_chapter.name:
 
             notification_statuses: list[tuple[Chat, Exception]] = \
-                await notify_suscribers(sus_manga.last_chapter, [sus.chat])
-            
-            if notification_statuses[0][1] is None:
+                await notify_suscribers(
+                    sus_manga.last_chapter,
+                    [sus.chat],
+                    publisher,
+                    bot_id,
+                )
 
+            if notification_statuses[0][1] is None:
                 if not memory.update_suscription_last(
                     chat_id=sus.chat.id,
                     manga_name=sus.manga.name,
@@ -98,14 +94,7 @@ async def process_reporting() -> list[tuple[Suscription, Exception]]:
     return report
 
 
-###############################################################################
-#                                 ON MEMORY                                   #
-###############################################################################
-
 def delete_suscription(sus: Suscription) -> bool:
-    """
-    Wraps the full suscription deletion based on the suscription object
-    """
     if sus is None:
         log(
             "bot",
@@ -118,56 +107,59 @@ def delete_suscription(sus: Suscription) -> bool:
 
     else:
         return memory.delete_suscription(sus.chat.id, sus.manga.name)
-    
+
     return False
 
 
-def prune_suscriptions(suscriptions: list[tuple[Suscription, Exception]]):
-    """
-    Deletes a list of suscriptions based on their issues report
-    """
-
+def prune_suscriptions(
+    suscriptions: list[tuple[Suscription, Exception]]
+) -> None:
     for sus, ex in suscriptions:
-
         if ex is None:
             continue
+        log(
+            "bot",
+            "warning",
+            [
+                "prune_suscriptions",
+                f"Publish error on suscription '{sus}': "
+                f"{ex.__class__.__name__}: {ex}"
+            ]
+        )
 
-        if isinstance(ex, UserIsBlocked):
-            ex: UserIsBlocked
-            log(
-                "bot",
-                "error",
-                [
-                    "prune_suscriptions",
-                    "Suscription obsolete due to User Blocked, pruning ongoing..."
-                ]
-            )
-            log(
-                "bot",
-                "error",
-                [
-                    "prune_suscriptions",
-                    f"{ex.MESSAGE}"
-                ]
-            )
+
+async def handle_delivery_error(error_body: dict) -> None:
+    status = error_body.get("status")
+    error_type = error_body.get("error_type", "")
+    chat_id = error_body.get("chat_id")
+
+    if status == "failed" and error_type == "USER_IS_BLOCKED" and chat_id:
+        suscriptions: list[Suscription] = \
+            memory.read_suscription_by_chat(chat_id)
+        for sus in suscriptions:
             delete_suscription(sus)
+        log(
+            "bot",
+            "error",
+            [
+                "handle_delivery_error",
+                f"Pruned all subscriptions for blocked user chat {chat_id}"
+            ]
+        )
 
-        else:
-            log(
-                "bot",
-                "warning",
-                [
-                    "prune_suscriptions",
-                    f"Unmanaged error on suscription '{ex.__class__}': no action scheduled"
-                ]
-            )
+    elif status == "failed" and chat_id:
+        log(
+            "bot",
+            "warning",
+            [
+                "handle_delivery_error",
+                f"Delivery failed for chat {chat_id}: "
+                f"{error_type} - {error_body.get('error_message', '')}"
+            ]
+        )
 
-###############################################################################
-#                                  SCRAPPING                                  #
-###############################################################################
 
 def explore_web(url: str):
-    """Explore the web and retrieve the information"""
     html: str = it.download_page(url)
     data: dict[str, list[dict[str, str]]] = it.parse_html(html)
 
@@ -193,7 +185,7 @@ def explore_web(url: str):
                         name=chapter.manga,
                         url="",
                         last_chapter=None
-                        ):
+                ):
                     log("bot", "info", [
                         "explore_web",
                         f"New manga {chapter.manga}"

@@ -9,13 +9,17 @@
 
 ## 1. Overview
 
-This `Chapter Notifier` is a telegram bot aimed to search and then notify to the suscribed users the availability of a new manga chapter, based on [mangapanda](http://mangapanda.onl) webpage.
+This `Chapter Notifier` is a telegram bot aimed to search and then notify to the suscribed users the availability of a new manga chapter, based on [mangapanda](http://mangapanda.onl) webpage. It uses an event-driven architecture via RabbitMQ AMQP, consuming Telegram events from the [tg-if](https://github.com/alvmarrod/tg-if) gateway.
 
 Due to the implementation being layered and generic enough, it is easily adaptable to other projects that aim for the same working flow: `[query a source] -> [process] -> [store in database] -> [notify]`
 
 ## 2. Features
 
-The app has a behaviour that is configurable ...
+- Consumes Telegram events (commands, callback queries) via RabbitMQ from tg-if gateway
+- Publishes Telegram responses and notifications through the same message broker
+- Delivery error handling — automatically prunes subscriptions on USER_IS_BLOCKED
+- Discoverable commands — registers bot commands on startup via tg-if subscriber-commands queue
+- Fully async event loop with graceful connection lifecycle
 
 ## 3. Project Structure
 
@@ -23,16 +27,19 @@ The project is organized accordingly to layered architecture principles, which c
 
 ## 4. Execution
 
-To execute the bot, provide a valid `.env` file at `src` directory as `src/.env` with the following variables. Note that `BOT_NAME` and `ADMIN_USERNAME` are not in use so far, so their value is not important.
+The bot no longer connects directly to Telegram. Instead it consumes events from and publishes responses to a RabbitMQ broker via the [tg-if](https://github.com/alvmarrod/tg-if) gateway. Provide a valid `.env` file at `src` directory as `src/.env` with the following variables:
 
 ```properties
-TB_CHAPTER_NOTIFIER_API_ID=
-TB_CHAPTER_NOTIFIER_API_HASH=
-TB_CHAPTER_NOTIFIER_BOT_TOKEN=
-
+BOT_ID=chaptnotifier
+SUBSCRIBER_ID=svc_chaptnotifier
 BOT_NAME=
 ADMIN_USERNAME=
 DATABASE_FILEPATH=data/roger_db.db
+
+RABBITMQ_HOST=localhost
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASS=guest
 ```
 
 Then:
@@ -43,7 +50,7 @@ make run
 
 ## 5. Deploying with Docker
 
-You can deploy it directly either using `docker-compose.yaml` provided file or `make docker-deploy`. In case of the first
+You can deploy it directly either using `docker-compose.yaml` provided file or `make docker-deploy`.
 
 1. Build your image
 
@@ -54,8 +61,10 @@ make docker-build
 2. Run a container
 
 ```bash
-docker run -d --env-file ./src/.env -v $(pwd)/app/data:/app/data tgbot-chaptnotifier:1.0.0
+docker run -d --env-file ./src/.env -v $(pwd)/app/data:/app/data tgbot-chaptnotifier:2.0.0
 ```
+
+> **Note**: The container requires access to a RabbitMQ broker. Ensure the `RABBITMQ_HOST` in `.env` resolves correctly from within the container (use a shared Docker network if running RabbitMQ in another container).
 
 ## Testing
 
@@ -63,13 +72,9 @@ You can run all the unitary tests for the project using `make test`. As result, 
 
 ## FAQ
 
-- Q: Should the project run correctly (and its tests) just after `git clone`?
+- Q: Does the service work out of the box as docker container?
 
-> No, remember this is a telegram bot. `pyrogram client` initialization has not been mocked, so you will need to setup your `.env` file to provide the necessary environment variables.
-
-- Q: Does the service works out of the box as docker container?
-
-> A: Yes.
+> Yes, as long as a RabbitMQ broker is reachable.
 
 - Q: I have issues running the container out of the box due to the database file. Why?
 
@@ -77,12 +82,13 @@ You can run all the unitary tests for the project using `make test`. As result, 
 
 ## Dependencies
 
-1. [pyrofork](https://github.com/Mayuri-Chan/pyrofork)
+1. [aio-pika](https://aio-pika.readthedocs.io/) — RabbitMQ AMQP client
 2. [emoji](https://github.com/python-telegram-bot/python-telegram-bot/wiki/Emoji)
 3. [sqlite3](https://sqlite.org/index.html)
 4. [python-dotenv](https://github.com/theskumar/python-dotenv)
 5. [apscheduler](https://github.com/agronholm/apscheduler)
 6. [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/)
+7. [tg-if](https://github.com/alvmarrod/tg-if) — Telegram MTProto gateway
 
 ## Contributing
 
