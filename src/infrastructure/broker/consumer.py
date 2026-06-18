@@ -3,7 +3,10 @@ from typing import Any, Awaitable, Callable, Optional
 
 from aio_pika import IncomingMessage, Queue
 
-from src.infrastructure.broker.rabbitmq import RabbitMQManager
+try:
+    from src.infrastructure.broker.rabbitmq import RabbitMQManager
+except ModuleNotFoundError:
+    from infrastructure.broker.rabbitmq import RabbitMQManager
 
 
 OnMessage = Callable[[dict[str, Any]], Awaitable[None]]

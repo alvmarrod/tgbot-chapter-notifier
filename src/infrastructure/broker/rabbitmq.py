@@ -4,7 +4,10 @@ from typing import Optional
 import aio_pika
 from aio_pika import RobustConnection, Channel, Queue
 
-from src.infrastructure.broker.config import BrokerConfig
+try:
+    from src.infrastructure.broker.config import BrokerConfig
+except ModuleNotFoundError:
+    from infrastructure.broker.config import BrokerConfig
 
 
 class RabbitMQManager:

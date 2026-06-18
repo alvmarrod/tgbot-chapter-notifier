@@ -5,7 +5,10 @@ from typing import Any, Optional
 
 import aio_pika
 
-from src.infrastructure.broker.rabbitmq import RabbitMQManager
+try:
+    from src.infrastructure.broker.rabbitmq import RabbitMQManager
+except ModuleNotFoundError:
+    from infrastructure.broker.rabbitmq import RabbitMQManager
 
 
 class ResponsePublisher:
