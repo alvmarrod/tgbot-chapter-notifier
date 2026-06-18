@@ -1,6 +1,9 @@
 from typing import Any, Optional, Callable, Awaitable
 
-from src.infrastructure.broker import ResponsePublisher
+try:
+    from src.infrastructure.broker import ResponsePublisher
+except ModuleNotFoundError:
+    from infrastructure.broker import ResponsePublisher
 
 Handler = Callable[..., Awaitable[None]]
 
