@@ -2,11 +2,11 @@ name: rogerbot
 
 services:
   roger:
-    image: tgbot-chaptnotifier:1.0.0
+    image: tgbot-chaptnotifier:2.0.0
     container_name: rogerbot
     restart: unless-stopped
     env_file:
-      - src/.env
+      - ./.env
     volumes:
       - type: bind
         source: app/data

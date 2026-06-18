@@ -2,5 +2,4 @@ emoji==2.12.1
 python-dotenv
 apscheduler==3.10.4
 beautifulsoup4==4.12.3
-tgcrypto-pyrofork>=1.2.6
-pyrofork
+aio-pika>=9.4.0

@@ -1,32 +1,23 @@
-
 try:
     import src.utils as icons
     from src.domain.model import MangaChapter
     from src.domain.communications import Chat
-    from src.app.client import pyrogram_client, LANG_DICT
+    from src.app.client import LANG_DICT, ERROR_QUEUE
+    from src.infrastructure.broker import ResponsePublisher
 except ModuleNotFoundError:
     import utils as icons
     from domain.model import MangaChapter
     from domain.communications import Chat
-    from app.client import pyrogram_client, LANG_DICT
+    from app.client import LANG_DICT, ERROR_QUEUE
+    from infrastructure.broker import ResponsePublisher
 
 
-###############################################################################
-#                                  MESSAGES                                   #
-###############################################################################
-
-async def notify_suscribers(chapter: MangaChapter, chats: list[Chat]) \
-    -> list[tuple[Chat, Exception]]:
-    """Notifies the suscribers of a new chapter
-    
-    Returns a list with the status returned by each Chat notification, based
-    on exceptions
-
-    Possible execeptions:
-    - Can raise
-      - pyrogram.errors.exceptions.forbidden_403.UserIsBlocked
-    """
-    assert pyrogram_client is not None, "Pyrogram client is None"
+async def notify_suscribers(
+    chapter: MangaChapter,
+    chats: list[Chat],
+    publisher: ResponsePublisher,
+    bot_id: str,
+) -> list[tuple[Chat, Exception]]:
     results: list[tuple[Chat, Exception]] = []
 
     message: str = LANG_DICT["generic"]["newElement"] % (
@@ -39,10 +30,11 @@ async def notify_suscribers(chapter: MangaChapter, chats: list[Chat]) \
 
     for chat in chats:
         try:
-            await pyrogram_client.send_message(
-                chat.id,
-                message,
-                disable_web_page_preview=True
+            await publisher.publish_text(
+                chat_id=chat.id,
+                text=message,
+                disable_web_page_preview=True,
+                reply_to=ERROR_QUEUE,
             )
             results.append((chat, None))
         except Exception as err:

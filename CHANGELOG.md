@@ -1,16 +1,36 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] - 2026-06-18
 
 ### Added
 
-- Working mode: `normal|whitelist|blacklist`
-- Chat control to avoid usage from blacklisted groups/users, or only allow whitelisted groups/users depending on working mode
+- AMQP/RabbitMQ event-driven architecture via tg-if gateway
+- Event dispatcher for routing command and callback_query events
+- Responder helper for Telegram responses (reply_text, send_message, edit_text, answer_callback)
+- Delivery error consumer to handle USER_IS_BLOCKED and prune subscriptions
+- Broker config and publisher modules for RabbitMQ communication
+- Asynchronous startup flow with connection management
+
+### Changed
+
+- Migrated from PyroFork (direct MTProto) to RabbitMQ AMQP
+- All handlers now accept `(responder, chat_id, **kwargs)` instead of `(Client, Message/CallbackQuery)`
+- `notify_suscribers` publishes to RabbitMQ instead of `pyrogram_client.send_message`
+- Inline keyboards returned as `list[list[dict]]` instead of `InlineKeyboardMarkup`
+- Environment variables: removed `TB_CHAPTER_NOTIFIER_API_ID`/`HASH`/`TOKEN`, added `BOT_ID`, `SUBSCRIBER_ID`, `RABBITMQ_*`
+- Docker startup targets tg-if subscriber commands endpoint
 
 ### Removed
 
-- Removed unused functions on domain section related to suscription management.
-  - This is replaced by logic directly implemented over memory/database logic.
+- PyroFork and tgcrypto-pyrofork dependencies
+- `callback_router` (routing now in EventDispatcher)
+- Pyrogram client initialization code
+
+### Fixed
+
+- Chat title not available from command events — empty string inserted on registration
+
+## [Unreleased]
 
 ## [1.1.1] - 2025-06-21
 

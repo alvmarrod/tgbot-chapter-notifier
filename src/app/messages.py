@@ -2,11 +2,6 @@ import os
 import json
 from typing import Any
 
-from pyrogram.types import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup
-)
-
 try:
     from src.utils import log
 except ModuleNotFoundError:
@@ -17,10 +12,6 @@ if os.getenv("TB_CHAPTER_NOTIFIER_TEST", "False") == "True" or \
     MODULE_PATH: str = os.getcwd() + os.sep + "src" + os.sep
 else:
     MODULE_PATH: str = os.getcwd()
-
-###############################################################################
-#                                 AUX FUNCTIONS                               #
-###############################################################################
 
 
 def _page_items(items: list[str], page_items: int, page: int) \
@@ -38,7 +29,6 @@ def _page_items(items: list[str], page_items: int, page: int) \
     )
     end: int = min(start + page_items, len(items))
 
-    # Update actual page
     actual_pg = start // page_items
 
     if actual_pg == 0 and end == len(items):
@@ -49,10 +39,6 @@ def _page_items(items: list[str], page_items: int, page: int) \
         return [items[start:end], ["<", "X"]], actual_pg
     else:
         return [items[start:end], ["<", "X", ">"]], actual_pg
-
-###############################################################################
-#                                    PUBLIC                                   #
-###############################################################################
 
 
 def load_lang_dict(lang: str) -> Any:
@@ -113,10 +99,14 @@ def pg_text_inline_keyboard(source: str,
                             items: list[str],
                             max_line_blocks: int = 3,
                             page: int = 0,
-                            ) -> InlineKeyboardMarkup:
+                            ) -> list[list[dict[str, str]]]:
     """Prepare the inline keyboard for the message. The source function
-    is provided to identify the data source and target."""
-    keyboard: list[list[InlineKeyboardButton]] = []
+    is provided to identify the data source and target.
+
+    Returns list of rows, each row is a list of button dicts:
+    [{"text": "...", "callback_data": "..."}, ...]
+    """
+    keyboard: list[list[dict[str, str]]] = []
 
     max_chars: int = 40
     curr_kb: list[list[str]]
@@ -129,24 +119,24 @@ def pg_text_inline_keyboard(source: str,
         if any(['>' in row, '<' in row, 'X' in row]):
             keyboard.append(
                 [
-                    InlineKeyboardButton(
-                        text=button[:min(max_chars, len(button))],
-                        callback_data=source + ":"
+                    {
+                        "text": button[:min(max_chars, len(button))],
+                        "callback_data": source + ":"
                         + button + ":" + str(actual_pg)
-                    )
+                    }
                     for button in row
                 ]
             )
         else:
             keyboard.append(
                 [
-                    InlineKeyboardButton(
-                        text=button[:min(max_chars, len(button))],
-                        callback_data=source + ":" +
+                    {
+                        "text": button[:min(max_chars, len(button))],
+                        "callback_data": source + ":" +
                         str(i) + ":" + str(actual_pg)
-                    )
+                    }
                     for i, button in enumerate(row)
                 ]
             )
 
-    return InlineKeyboardMarkup(keyboard)
+    return keyboard

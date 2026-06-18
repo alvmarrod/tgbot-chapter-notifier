@@ -86,7 +86,7 @@ class TestAppMessages(unittest.TestCase):
         self.assertEqual(result_kb, [["item10"], ["<", "X"]])
         self.assertEqual(page, 3)
 
-    def test_pg_text_inline_keyboard_(self):
+    def test_pg_text_inline_keyboard(self):
         """Test the pg_text_inline_keyboard function"""
         sender: str = "sender"
         items: list[str] = ["item1", "item2", "item3", "item4"]
@@ -98,30 +98,29 @@ class TestAppMessages(unittest.TestCase):
                                               max_line_blocks,
                                               page)
 
-        self.assertIsInstance(result, msgs.InlineKeyboardMarkup)
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result[0]), 3)
+        self.assertEqual(len(result[1]), 2)
 
-        self.assertEqual(len(result.inline_keyboard), 2)
-        self.assertEqual(len(result.inline_keyboard[0]), 3)
-        self.assertEqual(len(result.inline_keyboard[1]), 2)
-
-        self.assertEqual(result.inline_keyboard[0][0].text, "item1")
-        self.assertEqual(result.inline_keyboard[0][1].text, "item2")
-        self.assertEqual(result.inline_keyboard[0][2].text, "item3")
-        self.assertEqual(result.inline_keyboard[1][0].text, "X")
-        self.assertEqual(result.inline_keyboard[1][1].text, ">")
+        self.assertEqual(result[0][0]["text"], "item1")
+        self.assertEqual(result[0][1]["text"], "item2")
+        self.assertEqual(result[0][2]["text"], "item3")
+        self.assertEqual(result[1][0]["text"], "X")
+        self.assertEqual(result[1][1]["text"], ">")
 
         result = msgs.pg_text_inline_keyboard(sender,
                                               items,
                                               max_line_blocks,
                                               page + 1)
 
-        self.assertEqual(len(result.inline_keyboard), 2)
-        self.assertEqual(len(result.inline_keyboard[0]), 1)
-        self.assertEqual(len(result.inline_keyboard[1]), 2)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result[0]), 1)
+        self.assertEqual(len(result[1]), 2)
 
-        self.assertEqual(result.inline_keyboard[0][0].text, "item4")
-        self.assertEqual(result.inline_keyboard[1][0].text, "<")
-        self.assertEqual(result.inline_keyboard[1][1].text, "X")
+        self.assertEqual(result[0][0]["text"], "item4")
+        self.assertEqual(result[1][0]["text"], "<")
+        self.assertEqual(result[1][1]["text"], "X")
 
     def test_pg_text_inline_keyboard_ask_wrong_page(self):
         """Test the pg_text_inline_keyboard function when asking for a wrong
@@ -136,14 +135,14 @@ class TestAppMessages(unittest.TestCase):
                                               max_line_blocks,
                                               page)
 
-        self.assertIsInstance(result, msgs.InlineKeyboardMarkup)
+        self.assertIsInstance(result, list)
 
-        self.assertEqual(len(result.inline_keyboard), 2)
-        self.assertEqual(len(result.inline_keyboard[0]), 1)
-        self.assertEqual(len(result.inline_keyboard[1]), 2)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result[0]), 1)
+        self.assertEqual(len(result[1]), 2)
 
-        self.assertEqual(result.inline_keyboard[1][0].text, "<")
-        self.assertEqual(result.inline_keyboard[1][1].text, "X")
+        self.assertEqual(result[1][0]["text"], "<")
+        self.assertEqual(result[1][1]["text"], "X")
 
         page = -1
         result = msgs.pg_text_inline_keyboard(sender,
@@ -151,30 +150,30 @@ class TestAppMessages(unittest.TestCase):
                                               max_line_blocks,
                                               page)
 
-        self.assertIsInstance(result, msgs.InlineKeyboardMarkup)
+        self.assertIsInstance(result, list)
 
-        self.assertEqual(len(result.inline_keyboard), 2)
-        self.assertEqual(len(result.inline_keyboard[0]), 3)
-        self.assertEqual(len(result.inline_keyboard[1]), 2)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result[0]), 3)
+        self.assertEqual(len(result[1]), 2)
 
-        self.assertEqual(result.inline_keyboard[0][0].text, "item1")
+        self.assertEqual(result[0][0]["text"], "item1")
         self.assertEqual(
-            result.inline_keyboard[0][0].callback_data,
+            result[0][0]["callback_data"],
             "sender:0:0"
         )
-        self.assertEqual(result.inline_keyboard[0][1].text, "item2")
+        self.assertEqual(result[0][1]["text"], "item2")
         self.assertEqual(
-            result.inline_keyboard[0][1].callback_data,
+            result[0][1]["callback_data"],
             "sender:1:0"
         )
-        self.assertEqual(result.inline_keyboard[0][2].text, "item3")
+        self.assertEqual(result[0][2]["text"], "item3")
         self.assertEqual(
-            result.inline_keyboard[0][2].callback_data,
+            result[0][2]["callback_data"],
             "sender:2:0"
         )
 
-        self.assertEqual(result.inline_keyboard[1][0].text, "X")
-        self.assertEqual(result.inline_keyboard[1][1].text, ">")
+        self.assertEqual(result[1][0]["text"], "X")
+        self.assertEqual(result[1][1]["text"], ">")
 
 
 if __name__ == "__main__":
