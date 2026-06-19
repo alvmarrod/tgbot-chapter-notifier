@@ -92,6 +92,7 @@ class ResponsePublisher:
     async def publish_callback_answer(
         self,
         callback_query_id: str,
+        chat_id: int,
         text: Optional[str] = None,
         show_alert: bool = False,
     ) -> None:
@@ -105,6 +106,7 @@ class ResponsePublisher:
             "correlation_id": "",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "bot_id": self._bot_id,
+            "chat_id": chat_id,
             "response_type": "answer_callback_query",
             "payload": payload,
         }

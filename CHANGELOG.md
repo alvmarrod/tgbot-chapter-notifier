@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1] - 2026-06-18
+
+### Fixed
+
+- `publish_callback_answer` missing `chat_id` in envelope — callback responses were sent without chat context, causing tg-if to reject or misroute them
+
 ## [2.0.0] - 2026-06-18
 
 ### Added

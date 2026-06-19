@@ -74,6 +74,7 @@ class Responder:
     ) -> None:
         await self._publisher.publish_callback_answer(
             callback_query_id=self.callback_id,
+            chat_id=self.chat_id,
             text=text,
             show_alert=show_alert,
         )
